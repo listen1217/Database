@@ -56,11 +56,16 @@ WHERE (l.l_returnflag = 'R') AND
 
 ANSWER: 109 rows in set (17.47 sec)
 
+(q4)
+=====
+SELECT ps.ps_partkey, ps.ps_suppkey, ps.ps_availqty 
+FROM partsupp AS ps 
+WHERE (ps.ps_partkey < 100) AND (ps.ps_suppkey < 50)
 
-==========================================================
+ANSWER: 48 rows (1.95 sec)
 
 (q5)
-
+============================================================
 
 SELECT SUM (l.l_discount)
 FROM customer AS c, orders AS o, lineitem AS l
