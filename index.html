@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Database : " />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Database</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/listen1217/Database">View on GitHub</a>
+
+          <h1 id="project_title">Database</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/listen1217/Database/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/listen1217/Database/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Database System ReadMe file:</h1>
+
+<p>by Xin Li</p>
+
+<p>To compile the code in GNU/Linux or Mac, use command "make", the makefile is contained in the codes.</p>
+
+<p>The database contents in my local use TPC-H benchmark 10Mb version, the code can also run on 1Gb data.
+To use the data of TPC-H 10Mb benchmark, please refer to:
+<a href="http://www.tpc.org/tpch/">http://www.tpc.org/tpch/</a></p>
+
+<p>Since the size is large, the contents of my database is not included in the codes.</p>
+
+<p>In main.h, the following 3 strings need to be changed according to environment settings.</p>
+
+<p>char *dbfile_dir // dir where binary heap files should be stored
+char *tpch_dir;//TPC-H benchmark's location
+char *catalog_path;// the catalog of database, the catalog file is included for the TPC-h benchmark, this can be set to default</p>
+
+<p>the database use some file to store the internal stuffs, In Defs.h,  "dbfile.meta" is the name for these files</p>
+
+<h1>Several test case can be as following:</h1>
+
+<h1>(q1)</h1>
+
+<p>SELECT SUM (ps.ps_supplycost)
+FROM part AS p, supplier AS s, partsupp AS ps
+WHERE (p.p_partkey = ps.ps_partkey) AND
+    (s.s_suppkey = ps.ps_suppkey) AND
+      (s.s_acctbal &gt; 2500)</p>
+
+<h1>(q2)</h1>
+
+<p>SELECT SUM (c.c_acctbal)
+FROM customer AS c, orders AS o
+WHERE (c.c_custkey = o.o_custkey) AND
+      (o.o_totalprice &lt; 10000)</p>
+
+<p>ANSWER: 1.33123e+08 (17.31 sec) </p>
+
+<h1>(q3)</h1>
+
+<p>caution!!!!!!!!tooooooo slow!!!!!!!! in 1Gb data</p>
+
+<p>SELECT l.l_orderkey, l.l_partkey, l.l_suppkey
+FROM lineitem AS l
+WHERE (l.l_returnflag = 'R') AND
+    (l.l_discount &lt; 0.04 OR l.l_shipmode = 'MAIL') AND 
+    (l.l_orderkey &gt; 5000) AND (l.l_orderkey &lt; 6000)</p>
+
+<p>ANSWER: 109 rows in set (17.47 sec)</p>
+
+<h1>(q4)</h1>
+
+<p>SELECT ps.ps_partkey, ps.ps_suppkey, ps.ps_availqty 
+FROM partsupp AS ps 
+WHERE (ps.ps_partkey &lt; 100) AND (ps.ps_suppkey &lt; 50)</p>
+
+<p>ANSWER: 48 rows (1.95 sec)</p>
+
+<h1>(q5)</h1>
+
+<p>SELECT SUM (l.l_discount)
+FROM customer AS c, orders AS o, lineitem AS l
+WHERE (c.c_custkey = o.o_custkey) AND
+      (o.o_orderkey = l.l_orderkey) AND
+      (c.c_name = 'Customer#000070919') AND
+      (l.l_quantity &gt; 30) AND (l.l_discount &lt; 0.03)</p>
+
+<p>ANSWER: 0.0075 (55.4 sec)</p>
+
+<h1>(q6)</h1>
+
+<p>SELECT DISTINCT s.s_name
+FROM supplier AS s, part AS p, partsupp AS ps
+WHERE (s.s_suppkey = ps.ps_suppkey) AND
+      (p.p_partkey = ps.ps_partkey) AND
+      (p.p_mfgr = 'Manufacturer#4') AND
+      (ps.ps_supplycost &lt; 350)</p>
+
+<p>ANSWER: 9964 rows (1.51 sec)</p>
+
+<h1>(q7)</h1>
+
+<p>SELECT SUM (l.l_extendedprice * (1 - l.l_discount)), l.l_orderkey, o.o_orderdate, o.o_shippriority
+FROM customer AS c, orders AS o, lineitem AS l 
+WHERE (c.c_mktsegment = 'BUILDING') AND 
+      (c.c_custkey = o.o_custkey) AND (l.l_orderkey = o.o_orderkey) AND
+      (l.l_orderkey &lt; 100 OR o.o_orderkey &lt; 100)
+GROUP BY l.l_orderkey, o.o_orderdate, o.o_shippriority</p>
+
+<p>ANSWER: 7 rows (41.2 sec)</p>
+
+<h1></h1>
+
+<h1>The instructions of the database</h1>
+
+<h1>CREATE TABLE</h1>
+
+<p>This one is pretty self-explanatory. If someone gives you this command, you create the associated table and remember its schema. Here is an example of the command:
+CREATE TABLE mytable (att1 INTEGER, att2 DOUBLE, att3 STRING) AS HEAP;</p>
+
+<p>The “AS” part of the command will include either “SORTED” or “HEAP”.
+If the type is SORTED, then there is also a required “ON” clause that tells the system what attributes to sort on:
+CREATE TABLE MYTABLE (att1 INTEGER, att2 DOUBLE, att3 STRING) AS SORTED ON att1, att2;</p>
+
+<p>don’t actually support use of the sorted file type.</p>
+
+<h1>INSERT INTO</h1>
+
+<p>In this one, you simply bulk load (append) to the specified database table from the specified text file. The name of the text file will be given in single quotes:
+INSERT ‘myfile’ INTO mytable;</p>
+
+<h1>DROP TABLE</h1>
+
+<p>This removes the relation from the system and kills the corresponding binary file:
+DROP TABLE mytable;</p>
+
+<h1>SET OUTPUT</h1>
+
+<p>Basically, this tells you where the result of the output table operation at the top of the query plan goes. It is legal for a user to give the sting STDOUT as the output location, in which case you write the output to the screen. The command is as follows:
+SET OUTPUT STDOUT;
+Which writes the result to the screen. Or:
+SET OUTPUT ‘myfile’;
+Finally, there is a third option:
+SET OUTPUT NONE;
+This option makes it so that you do not actually execute any query that you are given; you simply write out the query plan to the screen</p>
+
+<h1>SELECT...</h1>
+
+<p>Finally, run SQL</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Database maintained by <a href="https://github.com/listen1217">listen1217</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
