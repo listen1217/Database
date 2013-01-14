@@ -1,6 +1,7 @@
-Database System
-by Xin Li
+Database System ReadMe file:
 ================
+by Xin Li
+
 To compile the code in GNU/Linux or Mac, use command "make", the makefile is contained in the codes.
 
 The database contents in my local use TPC-H benchmark 10Mb version, the code can also run on 1Gb data.
@@ -22,17 +23,16 @@ the database use some file to store the internal stuffs, In Defs.h,  "dbfile.met
 Several test case can be as following:
 ======================================
 (q1)
-
+============================================================
 SELECT SUM (ps.ps_supplycost)
 FROM part AS p, supplier AS s, partsupp AS ps
 WHERE (p.p_partkey = ps.ps_partkey) AND
     (s.s_suppkey = ps.ps_suppkey) AND
 	  (s.s_acctbal > 2500)
 
-============================================================
 
 (q2)
-
+============================================================
 SELECT SUM (c.c_acctbal)
 FROM customer AS c, orders AS o
 WHERE (c.c_custkey = o.o_custkey) AND
@@ -41,9 +41,10 @@ WHERE (c.c_custkey = o.o_custkey) AND
 
 ANSWER: 1.33123e+08 (17.31 sec) 
 
-============================================================
+
 
 (q3)
+============================================================
 caution!!!!!!!!tooooooo slow!!!!!!!! in 1Gb data
 
 SELECT l.l_orderkey, l.l_partkey, l.l_suppkey
@@ -69,10 +70,10 @@ WHERE (c.c_custkey = o.o_custkey) AND
 	  (l.l_quantity > 30) AND (l.l_discount < 0.03)
 
 ANSWER: 0.0075 (55.4 sec)
-===========================================================
+
 
 (q6)
-
+===========================================================
 SELECT DISTINCT s.s_name
 FROM supplier AS s, part AS p, partsupp AS ps
 WHERE (s.s_suppkey = ps.ps_suppkey) AND
@@ -82,9 +83,10 @@ WHERE (s.s_suppkey = ps.ps_suppkey) AND
 
 
 ANSWER: 9964 rows (1.51 sec)
-===========================================================
-(q7)
 
+
+(q7)
+===========================================================
 SELECT SUM (l.l_extendedprice * (1 - l.l_discount)), l.l_orderkey, o.o_orderdate, o.o_shippriority
 FROM customer AS c, orders AS o, lineitem AS l 
 WHERE (c.c_mktsegment = 'BUILDING') AND 
@@ -93,5 +95,6 @@ WHERE (c.c_mktsegment = 'BUILDING') AND
 GROUP BY l.l_orderkey, o.o_orderdate, o.o_shippriority
 
 ANSWER: 7 rows (41.2 sec)
+
 ===========================================================
 
