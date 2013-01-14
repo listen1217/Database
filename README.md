@@ -103,3 +103,38 @@ ANSWER: 7 rows (41.2 sec)
 
 ===========================================================
 
+
+
+The instructions of the database
+=================================
+CREATE TABLE
+============
+This one is pretty self-explanatory. If someone gives you this command, you create the associated table and remember its schema. Here is an example of the command:
+CREATE TABLE mytable (att1 INTEGER, att2 DOUBLE, att3 STRING) AS HEAP;
+
+The “AS” part of the command will include either “SORTED” or “HEAP”.
+If the type is SORTED, then there is also a required “ON” clause that tells the system what attributes to sort on:
+CREATE TABLE MYTABLE (att1 INTEGER, att2 DOUBLE, att3 STRING) AS SORTED ON att1, att2;
+
+don’t actually support use of the sorted file type.
+
+INSERT INTO
+============
+In this one, you simply bulk load (append) to the specified database table from the specified text file. The name of the text file will be given in single quotes:
+INSERT ‘myfile’ INTO mytable;
+DROP TABLE
+============
+This removes the relation from the system and kills the corresponding binary file:
+DROP TABLE mytable;
+SET OUTPUT
+============
+Basically, this tells you where the result of the output table operation at the top of the query plan goes. It is legal for a user to give the sting STDOUT as the output location, in which case you write the output to the screen. The command is as follows:
+SET OUTPUT STDOUT;
+Which writes the result to the screen. Or:
+SET OUTPUT ‘myfile’;
+Finally, there is a third option:
+SET OUTPUT NONE;
+This option makes it so that you do not actually execute any query that you are given; you simply write out the query plan to the screen
+SELECT...
+============
+Finally, run SQL
